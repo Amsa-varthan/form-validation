@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Validation</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      transition: 0.3s ease;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
+      outline: none;
+      font-size: 15px;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      background: #f9f9ff;
+    }
+
+    input.valid {
+      border-color: #28a745;
+    }
+
+    small {
+      color: #e63946;
+      font-size: 12px;
+      display: none;
+      margin-top: 3px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    @media (max-width: 480px) {
+      form {
+        margin: 0 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<form id="myForm" novalidate>
+  <h2>Create Account</h2>
+
+  <label>Email
+    <input type="email" id="email" required>
+    <small>Please enter a valid email address.</small>
+  </label>
+
+  <label>Password
+    <input type="password" id="password" minlength="6" required>
+    <small>Password must be at least 6 characters.</small>
+  </label>
+
+  <label>Confirm Password
+    <input type="password" id="confirmPassword" required>
+    <small>Passwords do not match.</small>
+  </label>
+
+  <button type="submit">Register</button>
+</form>
+
+<script>
+  const form = document.getElementById('myForm');
+  const email = document.getElementById('email');
+  const password = document.getElementById('password');
+  const confirmPassword = document.getElementById('confirmPassword');
+
+  function showError(input, message) {
+    const small = input.nextElementSibling;
+    small.textContent = message;
+    small.style.display = 'block';
+    input.classList.remove('valid');
+  }
+
+  function showSuccess(input) {
+    const small = input.nextElementSibling;
+    small.style.display = 'none';
+    input.classList.add('valid');
+  }
+
+  function checkEmail(input) {
+    const regex = /^[^@]+@[^@]+\.[^@]+$/;
+    if (!regex.test(input.value.trim())) {
+      showError(input, 'Enter a valid email address.');
+      return false;
+    }
+    showSuccess(input);
+    return true;
+  }
+
+  function checkPassword(input) {
+    if (input.value.trim().length < 6) {
+      showError(input, 'Password must be at least 6 characters.');
+      return false;
+    }
+    showSuccess(input);
+    return true;
+  }
+
+  function checkPasswordsMatch(p1, p2) {
+    if (p1.value !== p2.value || p2.value === '') {
+      showError(p2, 'Passwords do not match.');
+      return false;
+    }
+    showSuccess(p2);
+    return true;
+  }
+
+  email.addEventListener('input', () => checkEmail(email));
+  password.addEventListener('input', () => checkPassword(password));
+  confirmPassword.addEventListener('input', () => checkPasswordsMatch(password, confirmPassword));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const isEmailValid = checkEmail(email);
+    const isPasswordValid = checkPassword(password);
+    const isMatch = checkPasswordsMatch(password, confirmPassword);
+
+    if (isEmailValid && isPasswordValid && isMatch) {
+      alert('Form submitted successfully!');
+      form.reset();
+      [email, password, confirmPassword].forEach(input => input.classList.remove('valid'));
+    }
+  });
+</script>
+
+</body>
+</html>
